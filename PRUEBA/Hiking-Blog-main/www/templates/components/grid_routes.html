@@ -1,0 +1,38 @@
+{% block grid_routes %}
+ <!--Title-->
+ <div class="text-center">
+    <h2>Rutas</h2><br>
+</div>
+
+<!--Cards-->
+<div class="card-container">
+    {% for evento in events %}
+        <a title={{attribute(evento, 2)}} href="/evento/{{ attribute(evento, 0) }}">
+            <div class="card animate fadeIn text-center">
+                <h3>
+                    {{attribute(evento, 2)}}
+                </h3>
+                <img
+                    loading="lazy"
+                    src={{ attribute(evento, 1)? attribute(evento, 1) : "/assets/No-image-available.png" }}
+                    alt={{ attribute(evento, 2) }}
+                />
+                <p>
+                    <b>Fecha:</b> {{ attribute(evento, 3) }}
+                </p>
+                {% if role is same as "SUPER" or role is same as "GESTOR" %}
+                    {% if attribute(evento, 4) is same as 0 %}
+                        <p class="alert">No está publicado</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </a>
+    {% endfor %}
+</div>
+
+<div class="text-center mttt ppppp">
+    <button class="btn btn-more btn-block">
+        Ver más
+    </button>
+</div>
+{% endblock %}

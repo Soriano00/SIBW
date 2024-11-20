@@ -1,0 +1,199 @@
+{% extends "components/base.html" %}
+{% use "components/nav.html" %}
+
+    {% set body_class = 'grid-container' %}
+
+    {% block title %}
+        Admin - Eventos
+    {% endblock %}
+
+    {% block styles %}    
+        {{ parent() }}
+        <link rel="stylesheet" href="/styles/components/modal.css" />
+        <link rel="stylesheet" href="/styles/admin/admin.css" />
+        <link rel="stylesheet" href="/styles/admin/new_event.css" />
+    {% endblock %}
+
+    {% block header %}
+        {{ parent() }}
+         <!--Navigation-->
+         {% block navigation %}
+            {{ parent() }}
+         {% endblock %}
+    {% endblock %}
+
+    {% block aside_content%}
+        <form class="mttt form">
+            <div id="filter">
+                <i id="search-icon" class="fa fa-search" aria-hidden="true"></i>
+                <input 
+                    id="input_filter"
+                    placeholder="Filtre por texto" 
+                    type="text" 
+                />
+            </div>
+        </form>
+        <div class="mmm">        
+            <button
+                id="add_event"
+                class="btn btn-success"
+            ><i class="fa fa-plus" aria-hidden="true"></i> Añadir evento</button>
+
+            <div id="modal-form-comment" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>
+                            <i class="fas fa-pencil-alt"></i>
+                            Añadir evento
+                        </h2>
+                        <button id="close-modal" class="btn btn-p0 btn-transparent">
+                            <i class="far fa-times-circle" ></i> Cerrar
+                        </button>
+                    </div>
+
+                    <form 
+                        class="modal-body form-new-event ppp ml-10"
+                        action="/add_event.php" 
+                        enctype="multipart/form-data"
+                        method="POST"
+                    >
+
+                        <div class="flex-container mbb">
+                            <label class="flex-25 bold mr">Título: </label>
+                            
+                            <input
+                                class="flex-75"
+                                type="text"
+                                name="title"
+                            />
+                        </div>
+                        
+                        <div class="flex-container mbb">
+                            <label class="flex-25 bold mr">Publicado: </label>
+                            <input
+                                class="flex-75"
+                                type="checkbox"
+                                name="published"
+                            />
+                        </div>
+
+                        <div class="flex-container mbb">
+                            <label class="flex-25 bold mr">Email: </label>
+                            
+                            <input
+                                class="flex-75"
+                                type="text"
+                                value="{{ email }}"
+                                name="author"
+                                disabled
+                            />
+                        </div>
+                        
+                        <div class="flex-container mbb">
+                            <label class="flex-25 bold mr">Descripción: </label>
+
+                            <textarea
+                                class="flex-75"
+                                name="description"
+                            ></textarea>
+                        </div>
+                        
+                        <div class="flex-container mbb">
+                            <label class="flex-25 bold mr">Fecha: </label>
+
+                            <input 
+                                class="flex-75"
+                                type="date"
+                                name="date"
+                            />
+                        </div>
+
+                        <div class="flex-container mbb">
+                            <label class="flex-25 bold mr">Lugar: </label>
+
+                            <input 
+                                class="flex-75"
+                                type="text"
+                                name="place"
+                            />
+                        </div>
+
+                        <div class="flex-container mbb">
+                            <label class="flex-25 bold mr">Foto: </label>
+
+                            <input 
+                                class="flex-75"
+                                type="file"
+                                name="photo"
+                                accept=".jpg,.jpeg,.png"
+                            />
+                        </div>
+
+                        <div class="flex-container mbb">
+                            <label class="flex-25 bold mr">Tags: </label>
+
+                            <select class="flex-75" name="tag[]" multiple>
+                                {% for tag in tags %}
+                                    <option value="{{ attribute(tag,0) }}">{{ attribute(tag,1) }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <input
+                            type="submit"
+                            id="submit-button"
+                            class="mtt align-right btn btn-outlined-success"
+                        >
+                        
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+
+    {% block main %}
+    <div class="mmm">
+        <div class="text-center">
+            <h1>Panel de administración - Gestión de eventos</h1>
+            <hr class="hr-80" />
+        </div>
+        <ul class="container ppp">
+            {% for event in events %}
+                <li class="admin-event shadow user mm">
+                    <p class="admin-event-title">
+                        {{ attribute(event, 1) }}
+                        
+                        {% if attribute(event, 2) is same as 0 %}
+                            <span class="alert-underlined"><br>No está publicado</span>
+                        {% endif %}
+                    </p>
+
+                    <div class="comment-admin prr">    
+                        <button
+                            class="btn btn-rounded  m p btn-outlined-warning edit-button"
+                            class="edit-button"
+                            onclick="editEvent('{{ attribute(event, 0) }}')"
+                        >
+                            <i class="fas fa-edit"></i>
+                        </button>
+                
+                        <button
+                            class="btn  btn-rounded m p btn-outlined-danger delete-button"
+                            onclick="deleteEvent('{{ attribute(event, 0) }}')"
+                        >
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endblock %}
+
+    
+    {% block scripts %}
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script type="module" src="/js/components/modals/addEvent.js"></script>
+    <script type="text/javascript" src="/js/admin/filter-events.js"></script>
+    <script type="text/javascript" src="/js/admin/edit-events.js"></script>
+    {% endblock %}
